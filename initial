@@ -1,0 +1,44 @@
+import tkinter as tk
+from PIL import Image, ImageTk
+import os
+import itertools
+
+class PhotoFrame:
+    def __init__(self, root, image_paths, delay=2000):
+        self.root = root
+        self.root.title("Electronic Photo Frame")
+
+        # Load images
+        self.images = [Image.open(path) for path in image_paths]
+        self.image_cycle = itertools.cycle(self.images)
+
+        # Create a label to display the images
+        self.label = tk.Label(root)
+        self.label.pack(expand=True)
+
+        self.delay = delay
+        self.update_image()
+
+    def update_image(self):
+        # Get the next image from the cycle
+        image = next(self.image_cycle)
+        # Convert the Image object into a format that Tkinter can display
+        photo = ImageTk.PhotoImage(image)
+        # Update the label with the new image
+        self.label.config(image=photo)
+        self.label.image = photo
+        # Schedule the next update
+        self.root.after(self.delay, self.update_image)
+
+# Define the paths to your images
+image_dir = "path/to/your/images"  # Replace with your image directory
+image_paths = [os.path.join(image_dir, file) for file in os.listdir(image_dir) if file.endswith(('png', 'jpg', 'jpeg', 'gif'))]
+
+# Create the main window
+root = tk.Tk()
+
+# Create the photo frame instance with a delay of 2000ms (2 seconds)
+photo_frame = PhotoFrame(root, image_paths, delay=2000)
+
+# Run the application
+root.mainloop()
